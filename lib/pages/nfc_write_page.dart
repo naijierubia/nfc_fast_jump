@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nfc_manager/nfc_manager.dart';
-import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
 import 'dart:convert';
 
 class NfcWritePage extends StatefulWidget {
@@ -50,13 +50,13 @@ class _NfcWritePageState extends State<NfcWritePage> {
 
     try {
       // 使用新的API获取歌曲信息
-      final response = await http.get(
-        Uri.parse(
-            'https://apis.netstart.cn/music/song/detail?ids=${ids.join(',')}'),
+      final dio = Dio();
+      final response = await dio.get(
+        'https://163api.qijieya.cn/song/detail?ids=${ids.join(',')}',
       );
 
       if (response.statusCode == 200) {
-        final data = json.decode(response.body);
+        final data = response.data;
         if (data['code'] == 200 && data['songs'] != null) {
           List songs = data['songs'];
 
