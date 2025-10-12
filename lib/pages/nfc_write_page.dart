@@ -25,8 +25,6 @@ class _NfcWritePageState extends State<NfcWritePage> {
   bool _isCooldown = false; // 写入冷却状态标志
   bool _isLoading = false; // 歌曲信息加载状态
 
-  // 网易云音乐包名
-
   // 写入后的冷却时间（毫秒），可配置
   static const int WRITE_COOLDOWN_TIME = 1000;
 
