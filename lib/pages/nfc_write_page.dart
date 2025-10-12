@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nfc_manager/nfc_manager.dart';
 import 'package:dio/dio.dart';
-import 'dart:convert';
+import 'dart:typed_data';
 
 class NfcWritePage extends StatefulWidget {
   final List<Map<String, dynamic>> musicLinks;
@@ -24,6 +24,8 @@ class _NfcWritePageState extends State<NfcWritePage> {
   bool _isWriting = false;
   bool _isCooldown = false; // 写入冷却状态标志
   bool _isLoading = false; // 歌曲信息加载状态
+
+  // 网易云音乐包名
 
   // 写入后的冷却时间（毫秒），可配置
   static const int WRITE_COOLDOWN_TIME = 1000;
@@ -122,10 +124,20 @@ class _NfcWritePageState extends State<NfcWritePage> {
               return;
             }
 
-            // 写入当前链接
+            // 写入当前链接和应用包名
             String link = _musicLinks[_currentIndex]['url'];
             final uriRecord = NdefRecord.createUri(Uri.parse(link));
-            final message = NdefMessage([uriRecord]);
+
+            // 创建应用记录，指定网易云音乐包名
+            final appRecord = NdefRecord(
+              typeNameFormat: NdefTypeNameFormat.nfcExternal,
+              type: Uint8List.fromList('android.com:pkg'.codeUnits),
+              identifier: Uint8List.fromList([]),
+              payload: Uint8List.fromList('com.netease.cloudmusic'.codeUnits),
+            );
+
+            // 创建包含URI记录和应用记录的消息
+            final message = NdefMessage([uriRecord, appRecord]);
             await ndef.write(message);
 
             // 显示成功提示
